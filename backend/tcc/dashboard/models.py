@@ -30,4 +30,9 @@ class Data(models.Model):
 
     def __str__(self):
         return 'Game: ' + str(self.game) + '. ID: ' + str(self.id) + ', Artifact: ' + str(self.artifact) + ', Value: ' + self.value
-    
+
+class Dashboard(models.Model):
+    sequence = models.SmallAutoField(primary_key=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=100)
+    info = models.TextField()

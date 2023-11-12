@@ -36,7 +36,10 @@
                 style="width: 12rem; margin-bottom: .3rem;" />
             <input type="datetime-local" class="form-control" id="final" v-model="dataFinal" style="width: 12rem;" />
         </div>
-        <button type="submit" class="btn btn-primary">Gerar</button>
+        <button type="button" class="btn btn-success" @click="salvarDashboard">Salvar</button>
+        <div style="float: right; margin-bottom: 10rem;">
+            <button type="submit" class="btn btn-primary">Gerar</button>
+        </div>
     </form>
 </template>
 <script>
@@ -51,28 +54,7 @@ export default {
             idSelecionado: [],
             artefatos: [],
             artefatoSelecionado: [],
-            funcoes: [
-                /*{
-                    id: 'sum_all',
-                    nome: 'Somatório (Todos os artefatos)'
-                },
-                {
-                    id: 'sum_id',
-                    nome: 'Somatório (Por identificador)'
-                },
-                {
-                    id: 'sum_artifact',
-                    nome: 'Somatório (Por artefato)'
-                },
-                {
-                    id: 'count_value',
-                    nome: 'Ocorrência (quantidade por valor)'
-                },
-                {
-                    id: 'count_artifact',
-                    nome: 'Ocorrência (quantidade por artefato)'
-                }*/
-            ],
+            funcoes: [],
             funcaoSelecionada: '',
             graficoSelecionado: '',
             graficos: [
@@ -185,6 +167,21 @@ export default {
             })
 
             return type;
+        },
+        salvarDashboard() {
+            if (Boolean(this.jogoSelecionado) && Boolean(this.artefatoSelecionado.length) && Boolean(this.funcaoSelecionada) && Boolean(this.graficoSelecionado)) {
+                let info = {
+                    id: this.getIdSelecionados(),
+                    artefato: this.artefatoSelecionado,
+                    funcao: this.funcaoSelecionada,
+                    tipo: this.graficoSelecionado,
+                    inicio: this.dataInicio,
+                    final: this.dataFinal
+                }
+                this.$emit('salvar', this.jogoSelecionado, JSON.stringify(info));
+            } else {
+                this.$emit('alerta', 'Atenção', 'Preencha os campos obrigatórios para salvar.')
+            }
         }
     },
     created() {

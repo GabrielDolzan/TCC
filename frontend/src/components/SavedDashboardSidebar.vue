@@ -36,7 +36,7 @@ export default {
 
             if (this.jogoSelecionado) {
                 try {
-                    axios.get('/api/dashboard/game/' + this.jogoSelecionado)
+                    axios.get('/api/dashboard/' + this.jogoSelecionado)
                         .then(response => {
                             response.data.forEach(element => {
                                 this.dashboards.push(element);
@@ -51,9 +51,8 @@ export default {
             }
         },
         async gerarDashboard() {
-            await axios.post('/gerar-dashboard/', {
-                game: this.jogoSelecionado,
-                dashboard: this.dashboardSelecionado
+            await axios.post('/gerar-dashboard-saved/', {
+                    sequence: this.dashboardSelecionado
                 })
                 .then(retorno => {
                     this.$emit('dashboard', retorno)

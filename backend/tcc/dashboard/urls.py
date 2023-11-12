@@ -25,6 +25,11 @@ artifact_pk = views.ArtifactViewSet.as_view({
     #'delete': 'destroy'
 })
 
+dashboard = views.DashboardViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
 urlpatterns = [
     path('api/game/', game, name='games'),
     #path('api/game/<int:pk>', game_pk, name='gamedelete'),
@@ -38,7 +43,11 @@ urlpatterns = [
 
     path('api/identifier/<int:jogo>', views.getIdentifierGame, name='idgame'),
     
-    path('gerar-dashboard/', views.gerarDashboard, name="dashboard"),
+    path('gerar-dashboard/', views.gerarDashboard, name="gerardashboard"),
+    path('gerar-dashboard-saved/', views.gerarDashboardSaved, name="gerardashboardsaved"),
 
-    path('api/functions/', views.getFunctions, name='functions')
+    path('api/functions/', views.getFunctions, name='functions'),
+
+    path('api/dashboard/', dashboard, name='dashboard'),
+    path('api/dashboard/<int:jogo>', views.getDashboardGame, name='dashboardgame')
 ]
