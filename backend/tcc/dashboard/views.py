@@ -10,19 +10,9 @@ class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
-    def list(self, request):
-      data = list(Game.objects.values()) 
-
-      return JsonResponse(data, safe=False)
-
 class ArtifactViewSet(viewsets.ModelViewSet):
     queryset = Artifact.objects.all()
     serializer_class = ArtifactSerializer
-
-    def list(self, request):
-      data = list(Artifact.objects.values()) 
-
-      return JsonResponse(data, safe=False)
 
 class DataViewSet(viewsets.ModelViewSet):
     queryset = Data.objects.all()
@@ -42,28 +32,38 @@ class DashboardViewSet(viewsets.ModelViewSet):
     queryset = Dashboard.objects.all()
     serializer_class = DashboardSerializer
 
+@api_view(['GET'])
 def getIdentifierGame(request, jogo):
+    """
+    Busca os identificadores que o jogo possui
+    """
     data = list(Data.objects.filter(game=jogo, id__isnull=False).values('id').distinct())
 
     return JsonResponse(data, safe=False)
     
 @api_view(['GET'])
 def getArtifactGame(request, jogo):
+    """
+    Busca os artefatos do jogo
+    """
     data = list(Artifact.objects.filter(game=jogo).values()) 
 
     return JsonResponse(data, safe=False)
 
 @api_view(['GET'])
 def getDataGame(request, jogo):
+    """
+    Retorna os dados do jogo
+    """
     data = list(Data.objects.filter(game=jogo).values()) 
 
     return JsonResponse(data, safe=False)
 
+@api_view(['POST'])
 def gerarDashboard(request: HttpRequest):
     """
-    Retorna as informações do dashboard
+    Gera o dashboard e retorna as informações
     """
-    
     res = request.body
     json_str = res.decode('utf-8')
     json_dict = json.loads(json_str)
@@ -80,11 +80,11 @@ def gerarDashboard(request: HttpRequest):
     
     return JsonResponse(resposta)
 
+@api_view(['POST'])
 def gerarDashboardSaved(request: HttpRequest):
     """
-    Retorna as informações do dashboard
+    Gera o dashboard conforme salvo
     """
-    
     res = request.body
     json_str = res.decode('utf-8')
     json_dict = json.loads(json_str)
@@ -117,6 +117,9 @@ def getFunctions(request: HttpRequest):
 
 @api_view(['GET'])
 def getDashboardGame(request, jogo):
+    """
+    Retorna os dashboards salvos do jogo
+    """
     data = list(Dashboard.objects.filter(game=jogo).values()) 
 
     return JsonResponse(data, safe=False)

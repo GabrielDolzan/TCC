@@ -15,13 +15,14 @@
       <h4>Dicas!</h4>
       <div class="ms-3">
         <p>Ao gerar o Dashboard é possível selecionar mais de um artefato para exibir as informações.</p>
-        <p>É possível identificar a origem da informação por meio do campo "id" dos dados (ex: um usuário, uma instância,
+        <p>Utilize o campo "id" da "Data" para identificar a origem da informação "id" (ex: um usuário, uma instância,
           etc...).</p>
+        <p>É possível salvar e carregar os dashboards.</p>
       </div>
     </div>
     <div class="rounded p-3 mt-3 cards">
       <h3>
-        APIs
+        API
       </h3>
       <div class="ms-3">
         <h4 v-for="api in apis">
@@ -42,32 +43,14 @@ export default {
     return {
       apis: [
         {
-          nome: 'Jogo (/api/game/)',
-          campos: [
-            'sequence: smallint (auto)',
-            'nome: String'
-          ]
-        },
-        {
-          nome: 'Artefato (/api/artifact/)',
-          campos: [
-            'sequence: smallint (auto)',
-            'id: string',
-            'nome: string',
-            'game: smallint',
-            'type: string (numeric, timestamp (seconds), interval (seconds), text, bool)'
-          ]
-        },
-        {
           nome: 'Dados (/api/data/)',
           campos: [
-            'sequence: bigint (auto)',
             'game: smallint',
             'id: text (opcional)',
             'artifact: string',
             'value: string'
           ]
-        },
+        }
       ]
     };
   },

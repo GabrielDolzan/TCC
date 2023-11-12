@@ -15,8 +15,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            gameName: '',
-            counter: 0
+            gameName: ''
         };
     },
     methods: {

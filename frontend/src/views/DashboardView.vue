@@ -1,8 +1,7 @@
 <template>
     <div class="p-3" style="display: flex; height: 53rem;">
-        <div class="cards rounded p-3" style="width: 20rem; min-width: 15rem;">
-            <DashboardSidebar @dashboard="exibirDashboard" @salvar="salvarDashboard" @error="error" @alerta="alerta" />
-        </div>
+        <DashboardSidebar @dashboard="exibirDashboard" @salvar="salvarDashboard" @carregar="carregarDashboard"
+            @error="error" @alerta="alerta" ref="sidebar" />
         <Chart class="ms-3 rounded cards" :info="dados" :key="chartKey" v-if="dados" />
     </div>
 
@@ -18,12 +17,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalSalvar" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content cards">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="modalLabel">Salvar Dashboard</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -40,11 +40,39 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalCarregar" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content cards">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Carregar Dashboard</h1>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="dashboard" class="form-label">Dashboard:</label>
+                            <select class="form-select" required v-model="dashboardSelecionado" id="dashboard">
+                                <option value="" selected>Selecione um dashboard...</option>
+                                <option v-for="dashboard in dashboards" :value="dashboard">{{ dashboard.nome }}
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" @click="carregarDashboardModal">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import DashboardSidebar from '@/components/DashboardSidebar.vue'
-import Chart from '@/components/Chart.vue';
+import DashboardSidebar from '../components/DashboardSidebar.vue'
+import Chart from '../components/Chart.vue';
 import axios from 'axios'
 
 export default {
@@ -60,7 +88,9 @@ export default {
             msgToast: '',
             nome: '',
             jogo: '',
-            info: ''
+            info: '',
+            dashboardSelecionado: '',
+            dashboards: []
         }
     },
     methods: {
@@ -100,14 +130,14 @@ export default {
             this.jogo = jogo
             this.info = informacoes
 
-            const modal = document.getElementById('modal')
+            const modal = document.getElementById('modalSalvar')
             const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modal)
 
             modalBootstrap.show()
         },
         salvarDashboardModal() {
             if (this.nome) {
-                const modal = document.getElementById('modal')
+                const modal = document.getElementById('modalSalvar')
                 const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modal)
 
                 try {
@@ -128,9 +158,45 @@ export default {
             } else {
                 this.alerta('Atenção', 'Preencha os campos obrigatórios para salvar.')
             }
+        },
+        carregarDashboard(jogo) {
+            this.jogo = jogo
+            this.dashboards = []
+
+            const modal = document.getElementById('modalCarregar')
+            const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modal)
+
+            try {
+                axios.get('/api/dashboard/' + this.jogo)
+                    .then(response => {
+                        response.data.forEach(element => {
+                            this.dashboards.push(element);
+                        })
+                        modalBootstrap.show()
+                    })
+                    .catch(error => {
+                        this.$emit('alerta', 'Erro', 'Erro ao buscar os dashboards.')
+                    })
+            } catch (error) {
+                this.$emit('alerta', 'Erro', 'Erro ao buscar os dashboards.')
+            }
+        },
+        carregarDashboardModal() {
+            if (this.dashboardSelecionado) {
+                const modal = document.getElementById('modalCarregar')
+                const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modal)
+
+                this.$refs.sidebar.carregaInfo(this.dashboardSelecionado)
+
+                this.alerta('Sucesso', 'Dashboard carregado com sucesso.')
+                this.dashboardSelecionado = ''
+                this.dashboards = []
+
+                modalBootstrap.hide()
+            } else {
+                this.alerta('Atenção', 'Preencha os campos obrigatórios para carregar.')
+            }
         }
-    },
-    mounted() {
     }
 };
 

@@ -23,29 +23,25 @@ def get_functions():
 
     return functions
 
-def get_data(funcao: str, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str) -> dict:
+def get_data(funcao: str, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str) -> dict:
     """
-    Chama a função conforme o nome informado
+    Chama a classe da função conforme o nome informado
     """
 
-    # Nome da classe em formato de string
-    nome_da_classe = funcao
+    if funcao in globals():
+        classe_concreta = globals()[funcao]
 
-    if nome_da_classe in globals():
-
-        # Recupere a classe do dicionário global usando globals()
-        classe_concreta = globals()[nome_da_classe]
-
-        # Verifique se a classe é uma subclasse de MinhaClasseAbstrata
         if issubclass(classe_concreta, FunctionBase):
-            # Instancie a classe
             objeto_da_classe = classe_concreta()
+
+            if len(id) == 0:
+                id = [x['id'] for x in list(Data.objects.filter(game=game, id__isnull=False).values('id').distinct())]
 
             return objeto_da_classe.get_data(tipo, game, artefato, id, inicio, final)
         else:
-            return {'error': f'A Classe {nome_da_classe} deve implementar FunctionBase.'}
+            return {'error': f'A Classe {funcao} deve implementar FunctionBase.'}
     else:
-        return {'error': f'Classe {nome_da_classe} não identificada.'}
+        return {'error': f'Classe {funcao} não identificada.'}
 
 class FunctionBase(ABC):
     """
@@ -57,7 +53,7 @@ class FunctionBase(ABC):
         pass
 
     @abstractmethod
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         pass
 
 class SumAll(FunctionBase):
@@ -68,10 +64,9 @@ class SumAll(FunctionBase):
     def get_descricao(self):
         return 'Somatório (Todos os artefatos)'
 
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         data = []
 
-        # Soma o total por artefato
         for artef in artefato:
             art = Artifact.objects.get(id=artef)
 
@@ -123,7 +118,7 @@ class SumId(FunctionBase):
     def get_descricao(self):
         return 'Somatório (Por identificador)'
 
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         
         labels = []
         datasets = []
@@ -201,11 +196,10 @@ class SumArtifact(FunctionBase):
     def get_descricao(self):
         return 'Somatório (Por artefato)'
 
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         data = []
         labels = []
 
-        # Soma os valores por artefato
         for artef in artefato:
             art = Artifact.objects.get(id=artef)
 
@@ -253,13 +247,13 @@ class SumArtifact(FunctionBase):
 
 class CountValue(FunctionBase):
     """
-    Função que conta para cada valor a quantidade de vezes que possui
+    Função que conta para cada valor a quantidade de vezes que possui o valor
     """
 
     def get_descricao(self):
         return 'Ocorrência (quantidade por valor)'
 
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         labels = []
         datasets = []
         valores = []
@@ -270,7 +264,7 @@ class CountValue(FunctionBase):
 
             labels.append(art.nome)
 
-        # Busca todos os valores diferentes
+        # Busca todos os valores distintos
         if inicio and final:
             valor_distinto = Data.objects.filter(
                     artifact__in=artefato,
@@ -344,11 +338,10 @@ class CountArtifact(FunctionBase):
     def get_descricao(self):
         return 'Ocorrência (quantidade por artefato)'
 
-    def get_data(self, tipo: int, game: int, artefato: dict, id: dict, inicio: str, final: str):
+    def get_data(self, tipo: int, game: int, artefato: list, id: list, inicio: str, final: str):
         data = []
         labels = []
 
-        # Calcula a quantidade de ocorrências por artefato
         for artef in artefato:
             art = Artifact.objects.get(id=artef)
 
