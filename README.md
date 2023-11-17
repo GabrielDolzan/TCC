@@ -45,12 +45,16 @@
 
 ### Produção
 
-- Para execução é necessário possuir no ambiente os arquivos:
-1. docker-compose.yml.
-2. ./.env.prod.db
-3. ./frontend/nginx.conf
-4. ./backend/.env
-5. ./backend/entrypoint.sh
-6. ./nginx/default.conf
+Para execução é necessário possuir no ambiente os arquivos:
 
-- Executar `docker-compose up -d`.
+- [docker-compose.yml](docker-compose.yml)
+- [.env.prod.db](.env.prod.db)
+- [frontend](frontend)
+  - [nginx.conf](frontend/nginx.conf)
+- [backend](backend)
+  - [.env](backend/.env)
+  - [entrypoint.sh](backend/entrypoint.sh)
+- [nginx](nginx)
+  - [default.conf](nginx/default.conf)
+
+Executar `docker-compose up -d`.

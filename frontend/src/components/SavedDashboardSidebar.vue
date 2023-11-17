@@ -1,5 +1,5 @@
 <template>
-    <div class="cards rounded p-3" style="width: 20rem; min-width: 15rem;">
+    <div class="cards rounded p-3" style="width: 20rem; min-width: 15rem; height: 14rem;">
         <form @submit.prevent="gerarDashboard">
             <div class="mb-3">
                 <label for="game" class="form-label">Jogo:</label>
