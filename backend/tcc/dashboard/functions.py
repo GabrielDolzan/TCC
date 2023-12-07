@@ -1,5 +1,5 @@
 from .models import Data, Artifact
-from django.db.models import Sum, FloatField, Count
+from django.db.models import Sum, FloatField, Count, Avg
 from django.db.models.functions import Cast
 from abc import ABC, abstractmethod
 import inspect
@@ -8,7 +8,6 @@ def get_functions():
     """
     Retorna as funções disponíveis
     """
-
     functions = []
 
     for chave, valor in globals().items():
@@ -45,7 +44,7 @@ def get_data(funcao: str, tipo: int, game: int, artefato: list, id: list, inicio
 
 class FunctionBase(ABC):
     """
-    Classe abstrata para implementar ao criar uma função
+    Classe abstrata para ser implementada ao criar uma função.
     """
 
     @abstractmethod
@@ -58,7 +57,7 @@ class FunctionBase(ABC):
 
 class SumAll(FunctionBase):
     """
-    Função que soma todos os valores de todos os artefatos e identificadores
+    Função que soma todos os valores de todos os artefatos e identificadores.
     """
 
     def get_descricao(self):
@@ -68,7 +67,7 @@ class SumAll(FunctionBase):
         data = []
 
         for artef in artefato:
-            art = Artifact.objects.get(id=artef)
+            art = Artifact.objects.get(id=artef, game_id=game)
 
             if art.type not in ['numeric', 'interval']:
                 return {'error': 'Função não suportada para o artefato selecionado.'}
@@ -125,7 +124,7 @@ class SumId(FunctionBase):
         data = []
 
         for artef in artefato:
-            art = Artifact.objects.get(id=artef)
+            art = Artifact.objects.get(id=artef, game_id=game)
 
             labels.append(art.nome)
         
@@ -201,7 +200,7 @@ class SumArtifact(FunctionBase):
         labels = []
 
         for artef in artefato:
-            art = Artifact.objects.get(id=artef)
+            art = Artifact.objects.get(id=artef, game_id=game)
 
             if art.type not in ['numeric', 'interval']:
                 return {'error': 'Função não suportada para o artefato selecionado.'}
@@ -260,7 +259,7 @@ class CountValue(FunctionBase):
 
         # Busca a descrição dos artefatos
         for artef in artefato:
-            art = Artifact.objects.get(id=artef)
+            art = Artifact.objects.get(id=artef, game_id=game)
 
             labels.append(art.nome)
 
@@ -343,7 +342,7 @@ class CountArtifact(FunctionBase):
         labels = []
 
         for artef in artefato:
-            art = Artifact.objects.get(id=artef)
+            art = Artifact.objects.get(id=artef, game_id=game)
 
             if art.type not in ['numeric', 'interval']:
                 return {'error': 'Função não suportada para o artefato selecionado.'}

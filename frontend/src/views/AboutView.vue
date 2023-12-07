@@ -35,6 +35,15 @@
         </h4>
       </div>
     </div>
+    <div class="rounded p-3 mt-3 cards">
+      <h3>
+        Autor
+      </h3>
+      <div class="ms-3">
+        <p>Desenvolvido por Gabriel Dolzan, estudante do curso de Engenharia de Software na UDESC. 2023.</p>
+        <p>Contato: gabriel.dolzan@hotmail.com</p>
+      </div>
+    </div>
   </div>
 </template>
 <script>
