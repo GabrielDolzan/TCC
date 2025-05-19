@@ -42,6 +42,9 @@
 ### Local
 
 - Para execução local apenas executar `docker-compose up -d`.
+- Na primeira execução rodar os comandos para criar as tabelas no postgre:
+  - docker compose exec gunicorn python manage.py makemigrations
+  - docker compose exec gunicorn python manage.py migrate
 
 ### Produção
 
@@ -58,3 +61,7 @@ Para execução é necessário possuir no ambiente os arquivos:
   - [default.conf](nginx/default.conf)
 
 Executar `docker-compose up -d`.
+
+Na primeira execução rodar os comandos para criar as tabelas no postgre:
+- docker compose exec gunicorn python manage.py makemigrations
+- docker compose exec gunicorn python manage.py migrate
